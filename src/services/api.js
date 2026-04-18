@@ -2,9 +2,12 @@ import { weddingData } from "../weddingConfig";
 
 const BASE_URL = weddingData.API_BASE_URL;
 
-export const uploadPhotos = async (eventId, files) => {
+export const uploadPhotos = async (eventId, files, guestName) => {
   const formData = new FormData();
   formData.append("event_id", eventId);
+  if (guestName) {
+    formData.append("guest_name", guestName);
+  }
   files.forEach((file) => {
     formData.append("photos", file);
   });

@@ -9,7 +9,7 @@ import LehzatLogo from "../assets/pictures/Logo.png";
 import TrashIcon from "../assets/icons/trashicon.png";
 import BgIcon from "../assets/icons/bgicon.png";
 
-function UploadsPage({ images, setImages, onShare, eventId }) {
+function UploadsPage({ images, setImages, onShare, eventId, guestName }) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [targetIndex, setTargetIndex] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -50,7 +50,7 @@ function UploadsPage({ images, setImages, onShare, eventId }) {
     setError(null);
     try {
       const files = images.map((img) => img.file);
-      await uploadPhotos(eventId, files);
+      await uploadPhotos(eventId, files, guestName);
       onShare();
     } catch (err) {
       console.error("Upload failed:", err);
