@@ -30,7 +30,8 @@ export const getEventPhotos = async (eventId, filters = {}) => {
   if (filters.date) queryParams.append("date", filters.date);
   if (filters.featured !== undefined) queryParams.append("featured", filters.featured);
 
-  const response = await fetch(`${BASE_URL}/api/photos/event/${eventId}?${queryParams.toString()}`);
+  // Use the public endpoint to avoid 401 Unauthorized for guests
+  const response = await fetch(`${BASE_URL}/api/photos/event/${eventId}/public?${queryParams.toString()}`);
 
   if (!response.ok) {
     throw new Error("Failed to fetch event photos");

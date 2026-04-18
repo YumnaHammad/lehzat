@@ -1,11 +1,27 @@
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { weddingData } from "../weddingConfig";
 import calender from "../assets/icons/calendaricon.png";
 import TouchIcon from "../assets/icons/touchicon.png";
 import LehzatLogo from "../assets/pictures/Logo.png";
+import { getEventPhotos } from "../services/api";
 
 const Onboarding2 = ({ onFilesSelected, onStartSharing }) => {
   const fileInputRef = useRef(null);
+  const [totalMemories, setTotalMemories] = useState(0);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await getEventPhotos(weddingData.EVENT_ID);
+        if (res.success && res.data) {
+          setTotalMemories(res.data.photos?.length || 0);
+        }
+      } catch (err) {
+        console.error("Failed to fetch stats for onboarding:", err);
+      }
+    };
+    fetchStats();
+  }, []);
 
   const handleButtonClick = () => {
     if (onStartSharing) {

@@ -14,33 +14,45 @@ function ThankYouPage({
   const [apiPhotos, setApiPhotos] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [stats, setStats] = useState(null);
+  const BASE_URL = weddingData.API_BASE_URL;
 
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const [photosData, statsData] = await Promise.all([
-          getEventPhotos(weddingData.EVENT_ID),
-          getEventStats(weddingData.EVENT_ID)
-        ]);
+        // Fetch public photo list which contains all needed data for guests
+        const res = await getEventPhotos(weddingData.EVENT_ID);
 
-        // Photos
-        const photos = Array.isArray(photosData) ? photosData : (photosData.photos || []);
-        setApiPhotos(photos);
+        if (res.success && res.data) {
+          const apiPhotosArr = res.data.photos || [];
+          setApiPhotos(apiPhotosArr);
 
-        // Stats
-        if (statsData.success) {
-          setStats(statsData.data);
+          // Aggregate uploader statistics for the activity feed
+          const uploaderMap = {};
+          apiPhotosArr.forEach(photo => {
+            const name = photo.guest_name || photo.uploader?.username || "Guest";
+            if (!uploaderMap[name]) {
+              uploaderMap[name] = { name, count: 0, lastUpload: photo.created_at };
+            }
+            uploaderMap[name].count += 1;
+            if (new Date(photo.created_at) > new Date(uploaderMap[name].lastUpload)) {
+              uploaderMap[name].lastUpload = photo.created_at;
+            }
+          });
 
-          // Map uploaders to activities
-          const apiActivities = statsData.data.uploaders.map((u, i) => ({
-            id: `stat-${i}-${u.last_upload}`,
-            type: `${u.photos} Photos ${u.videos > 0 ? `& ${u.videos} Videos` : ""}`,
-            sharer: u.name,
-            time: u.last_upload ? new Date(u.last_upload).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "Just now"
-          }));
+          const apiActivities = Object.values(uploaderMap)
+            .sort((a, b) => new Date(b.lastUpload) - new Date(a.lastUpload))
+            .map((u, i) => ({
+              id: `api-stat-${i}`,
+              type: `${u.count} Photos`,
+              sharer: u.name,
+              time: u.lastUpload ? new Date(u.lastUpload).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "Just now"
+            }));
 
           setActivities(apiActivities.slice(0, 3));
+
+          // Update local stats mock-up for UI
+          setStats({ total_photos: apiPhotosArr.length });
         }
       } catch (err) {
         console.error("Failed to fetch event data:", err);
@@ -70,8 +82,8 @@ function ThankYouPage({
     }
   }, [guestName, uploadedImages.length, setActivities]);
 
-  // Use the total_photos from stats if available, otherwise fallback to local count
-  const memoriesCount = stats?.total_photos || uploadedImages.length || 13;
+  // Use the total_photos from API data, otherwise fallback to local count
+  const memoriesCount = apiPhotos.length || uploadedImages.length || 0;
 
 
 
@@ -133,7 +145,7 @@ function ThankYouPage({
                   {weddingData.names} {weddingData.eventTitle}
                 </p>
                 <h1 className="text-white text-[16px] sm:text-[18px] md:text-[20px] font-semibold leading-tight">
-                  Thank You For Sharing {memoriesCount} Memories!
+                  Thank You For Sharing Your Memories!
                 </h1>
               </div>
             </div>
@@ -172,20 +184,20 @@ function ThankYouPage({
                 Shared by Guests:
               </h2>
               <div className="grid grid-cols-3 justify-items-center gap-3 sm:gap-4 mt-2">
-                {displayPhotos.map((photo) => (
+                {displayPhotos?.slice(0, 2).map((photo) => (
                   <div
                     key={photo.id}
                     className="relative w-[clamp(96px,30vw,108px)] h-[clamp(98px,32vw,110px)] rounded-[1.2rem] overflow-hidden shadow-md"
                   >
                     <img
-                      src={photo.url}
+                      src={`${BASE_URL}${photo.url}`}
                       alt="Guest memory"
                       className="w-full h-full object-cover"
                     />
 
-                    <div className="absolute top-2 right-2 bg-[#be6c3e]/80 backdrop-blur-sm text-white text-[9px] px-2 py-0.5 rounded-full font-bold">
+                    {/* <div className="absolute top-2 right-2 bg-[#be6c3e]/80 backdrop-blur-sm text-white text-[9px] px-2 py-0.5 rounded-full font-bold">
                       {photo.time}
-                    </div>
+                    </div> */}
                   </div>
                 ))}
               </div>
