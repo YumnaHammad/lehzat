@@ -1,11 +1,12 @@
 import React, { useRef, useState, useEffect } from "react";
-import { weddingData } from "../weddingConfig";
+import { useWeddingData } from "../context/WeddingContext";
 import calender from "../assets/icons/calendaricon.png";
 import TouchIcon from "../assets/icons/touchicon.png";
 import LehzatLogo from "../assets/pictures/Logo.png";
 import { getEventPhotos } from "../services/api";
 
 const Onboarding2 = ({ onFilesSelected, onStartSharing }) => {
+  const { weddingData } = useWeddingData();
   const fileInputRef = useRef(null);
   const [totalMemories, setTotalMemories] = useState(0);
 

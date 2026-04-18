@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { getEventPhotos, getEventStats } from "../services/api";
-import { weddingData } from "../weddingConfig";
+import { useWeddingData } from "../context/WeddingContext";
+import { getEventPhotos } from "../services/api";
 import { Share2, ArrowRight } from "lucide-react";
 import ShareNameModal from "../components/ShareNameModal";
 import BgIcon from "../assets/icons/bgicon.png";
+
 function ThankYouPage({
   onRestart,
   uploadedImages = [],
@@ -11,6 +12,7 @@ function ThankYouPage({
   setActivities,
   guestName,
 }) {
+  const { weddingData } = useWeddingData();
   const [apiPhotos, setApiPhotos] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [stats, setStats] = useState(null);
@@ -184,13 +186,13 @@ function ThankYouPage({
                 Shared by Guests:
               </h2>
               <div className="grid grid-cols-3 justify-items-center gap-3 sm:gap-4 mt-2">
-                {displayPhotos?.slice(0, 2).map((photo) => (
+                {displayPhotos.map((photo) => (
                   <div
                     key={photo.id}
-                    className="relative w-[clamp(96px,30vw,108px)] h-[clamp(98px,32vw,110px)] rounded-[1.2rem] overflow-hidden shadow-md"
+                    className="relative w-full aspect-[1/1.02] rounded-[1.2rem] overflow-hidden shadow-md"
                   >
                     <img
-                      src={`${BASE_URL}${photo.url}`}
+                      src={photo.url.startsWith('http') ? photo.url : `${BASE_URL}${photo.url}`}
                       alt="Guest memory"
                       className="w-full h-full object-cover"
                     />

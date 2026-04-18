@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { ArrowLeft, Check, ArrowRight } from "lucide-react";
-import { weddingData } from "../weddingConfig";
+import { useWeddingData } from "../context/WeddingContext";
 import LehzatIcon from "../assets/icons/lehzatIcon.png";
 import LehzatLogo from "../assets/pictures/Logo.png";
 import BgIcon from "../assets/icons/bgicon.png";
 
 function ChoosePhotoPage({ images = [], onChoose, initialSelection = [] }) {
+  const { weddingData } = useWeddingData();
   const [selectedImages, setSelectedImages] = useState(
     Array.isArray(initialSelection) ? initialSelection : [],
   );

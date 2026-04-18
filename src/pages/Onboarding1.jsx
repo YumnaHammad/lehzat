@@ -1,5 +1,5 @@
 import React from "react";
-import { weddingData } from "../weddingConfig";
+import { useWeddingData } from "../context/WeddingContext";
 import calender from "../assets/icons/calendaricon.png";
 import TouchIcon from "../assets/icons/touchicon.png";
 import LehzatWhite from "../assets/pictures/lehatwhite.png";
@@ -7,6 +7,7 @@ import BgIcon from "../assets/icons/bgicon.png";
 
 
 function Onboarding1({ onNext }) {
+  const { weddingData } = useWeddingData();
   return (
     <div className="bg-[#fefef6] min-h-screen flex flex-col items-center ">
       <div className="w-full max-w-md mx-auto px-4 flex flex-col items-center pb-44 flex-1 justify-center ">

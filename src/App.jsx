@@ -13,6 +13,7 @@ import InstallAppPage from "./pages/InstallAppPage";
 import ChoosePhotoPage from "./pages/ChoosePhotoPage";
 import SharePreviewPage from "./pages/SharePreviewPage";
 import ShareNameModal from "./components/ShareNameModal";
+import { WeddingProvider } from "./context/WeddingContext";
 
 function App() {
   const { eventId: eventIdParam } = useParams();
@@ -115,98 +116,100 @@ function App() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden">
-      <div className="bg-[#fefef6] absolute inset-0 -z-10" />
+    <WeddingProvider eventId={eventId}>
+      <div className="relative min-h-screen overflow-x-hidden">
+        <div className="bg-[#fefef6] absolute inset-0 -z-10" />
 
-      {currentScreen === "splash" && <Splash />}
+        {currentScreen === "splash" && <Splash />}
 
-      {currentScreen === "onboarding1" && <Onboarding1 onNext={handleAction} />}
+        {currentScreen === "onboarding1" && <Onboarding1 onNext={handleAction} />}
 
-      {currentScreen === "onboarding2" && (
-        <Onboarding2
-          onStartSharing={handleStartSharing}
-          onFilesSelected={(files) => {
-            const newImages = files.map((file) => ({
-              file,
-              url: URL.createObjectURL(file),
-            }));
-            setUploadedImages((prev) => [...prev, ...newImages]);
-            setCurrentScreen("uploads");
-          }}
-        />
-      )}
+        {currentScreen === "onboarding2" && (
+          <Onboarding2
+            onStartSharing={handleStartSharing}
+            onFilesSelected={(files) => {
+              const newImages = files.map((file) => ({
+                file,
+                url: URL.createObjectURL(file),
+              }));
+              setUploadedImages((prev) => [...prev, ...newImages]);
+              setCurrentScreen("uploads");
+            }}
+          />
+        )}
 
-      {currentScreen === "mediaselection" && (
-        <MediaSelectionPage
-          onFilesSelected={(files) => {
-            const newImages = files.map((file) => ({
-              file,
-              url: URL.createObjectURL(file),
-            }));
-            setUploadedImages((prev) => [...prev, ...newImages]);
-            setCurrentScreen("uploads");
-          }}
-        />
-      )}
+        {currentScreen === "mediaselection" && (
+          <MediaSelectionPage
+            onFilesSelected={(files) => {
+              const newImages = files.map((file) => ({
+                file,
+                url: URL.createObjectURL(file),
+              }));
+              setUploadedImages((prev) => [...prev, ...newImages]);
+              setCurrentScreen("uploads");
+            }}
+          />
+        )}
 
-      {currentScreen === "uploads" && (
-        <UploadsPage
-          images={uploadedImages}
-          setImages={setUploadedImages}
-          onBack={() => setCurrentScreen("mediaselection")}
-          onShare={handleShareFlowStart}
-          eventId={eventId}
-          guestName={guestName}
-        />
-      )}
+        {currentScreen === "uploads" && (
+          <UploadsPage
+            images={uploadedImages}
+            setImages={setUploadedImages}
+            onBack={() => setCurrentScreen("mediaselection")}
+            onShare={handleShareFlowStart}
+            eventId={eventId}
+            guestName={guestName}
+          />
+        )}
 
-      {currentScreen === "thankyou" && (
-        <ThankYouPage
-          onRestart={handleGoToSocial}
-          uploadedImages={uploadedImages}
-          activities={activities}
-          setActivities={setActivities}
-          guestName={guestName}
-        />
-      )}
+        {currentScreen === "thankyou" && (
+          <ThankYouPage
+            onRestart={handleGoToSocial}
+            uploadedImages={uploadedImages}
+            activities={activities}
+            setActivities={setActivities}
+            guestName={guestName}
+          />
+        )}
 
-      {currentScreen === "socialshare" && (
-        <SocialSharePage
-          onShare={handleGoToChoosePhoto}
-          onSkip={handleGoToInstall}
-          onBack={() => setCurrentScreen("thankyou")}
-        />
-      )}
+        {currentScreen === "socialshare" && (
+          <SocialSharePage
+            onShare={handleGoToChoosePhoto}
+            onSkip={handleGoToInstall}
+            onBack={() => setCurrentScreen("thankyou")}
+          />
+        )}
 
-      {currentScreen === "choosephoto" && (
-        <ChoosePhotoPage
-          images={uploadedImages}
-          onBack={handleGoToSocial}
-          onChoose={handleGoToSharePreview}
-          initialSelection={selectedToShare}
-        />
-      )}
+        {currentScreen === "choosephoto" && (
+          <ChoosePhotoPage
+            images={uploadedImages}
+            onBack={handleGoToSocial}
+            onChoose={handleGoToSharePreview}
+            initialSelection={selectedToShare}
+          />
+        )}
 
-      {currentScreen === "sharepreview" && (
-        <SharePreviewPage
-          selectedImage={selectedToShare}
-          selectedFrameIndex={selectedFrameIndex}
-          onBack={handleGoToChoosePhoto}
-          onShare={handleFinalShare}
-        />
-      )}
+        {currentScreen === "sharepreview" && (
+          <SharePreviewPage
+            selectedImage={selectedToShare}
+            selectedFrameIndex={selectedFrameIndex}
+            onBack={handleGoToChoosePhoto}
+            onShare={handleFinalShare}
+          />
+        )}
 
-      {currentScreen === "installapp" && (
-        <InstallAppPage
-          images={uploadedImages}
-          onBack={() => setCurrentScreen("socialshare")}
-          activities={activities}
-        />
-      )}
-      {isNameModalOpen && (
-        <ShareNameModal onShare={handleNameSubmit} onSkip={handleNameSkip} />
-      )}
-    </div>
+        {currentScreen === "installapp" && (
+          <InstallAppPage
+            images={uploadedImages}
+            onBack={() => setCurrentScreen("socialshare")}
+            activities={activities}
+          />
+        )}
+        {isNameModalOpen && (
+          <ShareNameModal onShare={handleNameSubmit} onSkip={handleNameSkip} />
+        )}
+      </div>
+    </WeddingProvider>
   );
 }
 
