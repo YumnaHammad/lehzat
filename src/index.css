@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #fefef6;
+    color: #2a514c;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    overflow-x: hidden;
+    font-family: "Wix Madefor Display", "Outfit", sans-serif;
+  }
+}
+
+@theme {
+  --font-serif: "Constantia", "Times New Roman", serif;
+  --font-sans: "Rubik", "Wix Madefor Display", "Outfit", sans-serif;
+  --font-carattere: "Carattere";
+  --font-wix: "Wix Madefor Display", sans-serif;
+  --font-constantia: "Constantia", serif;
+  --font-rubik: "Rubik", sans-serif;
+}
+
+@utility scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
