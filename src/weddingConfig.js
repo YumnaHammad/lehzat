@@ -22,6 +22,6 @@ export const weddingData = {
   primaryColor: "#2A514C",
   secondaryColor: "#D4A373",
   backgroundColor: "#fefef6",
-  API_BASE_URL: "http://51.20.132.199",
+  API_BASE_URL: "https://api.lahzatapp.com",
   EVENT_ID: 1, // Placeholder event_id
 };
